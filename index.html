@@ -6,87 +6,84 @@
   <title>クリスマス宝くじ抽選</title>
   <style>
     body {
-      font-family: "Comic Sans MS", "Arial", sans-serif;
+      font-family: "Arial", sans-serif;
       text-align: center;
-      margin: 20px;
-      background: linear-gradient(to bottom, #ff5757, #008000);
-      color: white;
-      overflow: hidden;
+      margin: 0;
+      padding: 0;
+      background: linear-gradient(to bottom, #ffecd2, #fcb69f);
+      color: #333;
+      overflow-y: auto; /* スクロール対応 */
     }
     img {
-      max-width: 150px;
+      max-width: 200px;
       height: auto;
-      margin-bottom: 20px;
+      margin: 20px 0;
     }
     #numbers {
       font-size: 2.5em;
       margin: 20px;
-      font-family: "Trebuchet MS", "Arial", sans-serif;
+      font-family: "Verdana", sans-serif;
       height: 3em;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      color: #ffdd59;
+      color: #d35400;
       font-weight: bold;
-      animation: blink 1s infinite;
-    }
-    @keyframes blink {
-      50% { opacity: 0.6; }
     }
     #result {
       margin-top: 20px;
       font-size: 2em;
       font-weight: bold;
-      color: #fff;
-      text-shadow: 0 0 5px #ffdd59, 0 0 10px #ffeaa7;
+      color: #2ecc71;
     }
     button {
       padding: 15px 30px;
       margin: 10px;
       font-size: 1.2em;
       border: none;
-      border-radius: 20px;
+      border-radius: 30px;
       cursor: pointer;
-      transition: all 0.3s;
-      color: white;
-      box-shadow: 0 4px #555;
+      transition: transform 0.2s, box-shadow 0.2s;
     }
     button:disabled {
       background-color: #ccc;
       cursor: not-allowed;
     }
     #drawButton {
-      background-color: #ff4757;
+      background: #e74c3c;
+      color: #fff;
+      box-shadow: 0 4px #c0392b;
     }
     #drawButton:hover:not(:disabled) {
-      background-color: #ff6b81;
       transform: scale(1.1);
+      box-shadow: 0 6px #c0392b;
     }
     #resetButton {
-      background-color: #1e90ff;
+      background: #2980b9;
+      color: #fff;
+      box-shadow: 0 4px #2471a3;
     }
     #resetButton:hover {
-      background-color: #87ceeb;
       transform: scale(1.1);
+      box-shadow: 0 6px #2471a3;
     }
     #history {
       margin-top: 20px;
-      font-size: 1.2em;
-      text-align: left;
-      background: rgba(255, 255, 255, 0.2);
+      padding: 20px;
+      background: rgba(255, 255, 255, 0.8);
       border-radius: 10px;
-      padding: 10px;
-      color: #fff;
     }
     .history-item {
-      padding: 5px;
-      border-bottom: 1px solid #eee;
+      font-size: 1.2em;
+      margin-bottom: 10px;
+    }
+    footer {
+      margin-top: 30px;
+      font-size: 0.8em;
+      color: #666;
     }
   </style>
 </head>
 <body>
-  <h1>🎄 クリスマス宝くじ抽選 🎁</h1>
-  <img src="merumerut.png" alt="クリスマスツリー">
+  <h1>🎄 メルメルくじ 抽選 🎁</h1>
+  <img src="merumerut.png" alt="メルメルロゴ">
   <div>
     <button id="drawButton">抽選スタート</button>
     <button id="resetButton">リセット</button>
@@ -94,12 +91,12 @@
   <div id="numbers">--- ガチャガチャ演出中 ---</div>
   <div id="result">結果はここに表示されます。</div>
   <div id="history">
-    <h2>過去の結果 🎅</h2>
-    <ul id="historyList"></ul>
+    <h2>過去の結果</h2>
+    <div id="historyList"></div>
   </div>
+  <footer>© 2024 メルメル宝くじシステム</footer>
 
   <script>
-    // 抽選データ
     const tickets = [
       { group: "001", number: "202412" },
       { group: "002", number: "372525" },
@@ -111,23 +108,23 @@
     ];
 
     let currentRankIndex = 0; // 現在の順位
-    const historyList = document.getElementById("historyList");
     const drawButton = document.getElementById("drawButton");
+    const resetButton = document.getElementById("resetButton");
     const numbersDiv = document.getElementById("numbers");
+    const resultDiv = document.getElementById("result");
+    const historyList = document.getElementById("historyList");
 
-    // 抽選演出
     function startLottery() {
-      const resultDiv = document.getElementById("result");
-
-      // 抽選が全て終了したら警告を表示
       if (currentRankIndex >= tickets.length) {
-        resultDiv.textContent = "🎉 抽選完了しました！ 🎉";
-        numbersDiv.textContent = "--- 抽選完了 ---";
+        resultDiv.textContent = "🎉 全ての抽選が完了しました！ 🎉";
+        numbersDiv.textContent = "--- 抽選終了 ---";
+        drawButton.disabled = true;
         return;
       }
 
-      drawButton.disabled = true; // 抽選中ボタン無効化
+      drawButton.disabled = true;
       numbersDiv.textContent = "ガチャガチャ中...";
+
       let interval = setInterval(() => {
         const randomTicket = tickets[Math.floor(Math.random() * tickets.length)];
         numbersDiv.textContent = `--- ${randomTicket.group} --- ${randomTicket.number} ---`;
@@ -135,40 +132,32 @@
 
       setTimeout(() => {
         clearInterval(interval);
-        const drawnTicket = drawRandomTicket(); // ランダム抽選
-        numbersDiv.textContent = "--- 抽選完了 ---";
-        showNextResult(drawnTicket.group, drawnTicket.number);
-        drawButton.disabled = false; // 抽選終了でボタン有効化
+        const drawnTicket = drawRandomTicket();
+        numbersDiv.textContent = `--- ${drawnTicket.group} --- ${drawnTicket.number} ---`;
+        displayResult(drawnTicket.group, drawnTicket.number);
+        drawButton.disabled = false;
       }, 3000);
     }
 
-    // ランダムにチケットを抽選し、抽選済みリストに移動
     function drawRandomTicket() {
       const randomIndex = Math.floor(Math.random() * tickets.length);
       return tickets.splice(randomIndex, 1)[0];
     }
 
-    // 次の抽選結果を表示
-    function showNextResult(group, number) {
-      const resultDiv = document.getElementById("result");
+    function displayResult(group, number) {
       const rank = `${currentRankIndex + 1}等`;
       resultDiv.textContent = `${rank}: ${group}組 ${number}`;
-      
-      // 過去の結果に追加
-      const listItem = document.createElement("li");
-      listItem.className = "history-item";
-      listItem.textContent = `${rank}: ${group}組 ${number}`;
-      historyList.appendChild(listItem);
 
-      currentRankIndex++; // 次の順位に進む
+      const historyItem = document.createElement("div");
+      historyItem.className = "history-item";
+      historyItem.textContent = `${rank}: ${group}組 ${number}`;
+      historyList.appendChild(historyItem);
+
+      currentRankIndex++;
     }
 
-    // リセット処理
     function resetLottery() {
       currentRankIndex = 0;
-      document.getElementById("result").textContent = "結果はここに表示されます。";
-      numbersDiv.textContent = "--- ガチャガチャ演出中 ---";
-      historyList.innerHTML = ""; // 過去の結果をクリア
       tickets.push(
         { group: "001", number: "202412" },
         { group: "002", number: "372525" },
@@ -177,12 +166,15 @@
         { group: "002", number: "373150" },
         { group: "003", number: "777777" },
         { group: "0120", number: "828828" }
-      ); // 再度リストを初期化
+      );
+      resultDiv.textContent = "結果はここに表示されます。";
+      numbersDiv.textContent = "--- ガチャガチャ演出中 ---";
+      historyList.innerHTML = "";
+      drawButton.disabled = false;
     }
 
-    // イベントリスナー設定
     drawButton.addEventListener("click", startLottery);
-    document.getElementById("resetButton").addEventListener("click", resetLottery);
+    resetButton.addEventListener("click", resetLottery);
   </script>
 </body>
 </html>
