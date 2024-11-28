@@ -1,1 +1,111 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>宝くじ抽選サイト</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      margin: 20px;
+    }
+    img {
+      max-width: 100%;
+      height: auto;
+    }
+    #result {
+      margin-top: 20px;
+      font-size: 1.2em;
+      font-weight: bold;
+    }
+    button {
+      padding: 10px 20px;
+      margin: 10px;
+      font-size: 1em;
+      cursor: pointer;
+    }
+    #numbers {
+      font-size: 2em;
+      margin: 20px;
+    }
+  </style>
+</head>
+<body>
+  <h1>宝くじ抽選</h1>
+  <img src="merumerut.png" alt="ロゴ">
+  <div>
+    <button id="drawButton">抽選スタート</button>
+    <button id="resetButton">リセット</button>
+  </div>
+  <div id="numbers">--- 組 --- 番号 ---</div>
+  <div id="result">結果はここに表示されます。</div>
+
+  <script>
+    // 抽選データ
+    const tickets = [
+      { group: "001", number: "202412" },
+      { group: "002", number: "372525" },
+      { group: "0120", number: "444444" },
+      { group: "001", number: "241201" },
+      { group: "002", number: "373150" },
+      { group: "003", number: "777777" },
+      { group: "0120", number: "828828" }
+    ];
+
+    // 1等の固定当選データ
+    const winningTicket = { group: "003", number: "888888" };
+
+    let drawnResults = []; // 抽選結果を格納
+
+    // 抽選演出
+    function startLottery() {
+      const numbersDiv = document.getElementById("numbers");
+      const resultDiv = document.getElementById("result");
+
+      resultDiv.textContent = "抽選中...";
+      let interval = setInterval(() => {
+        const randomTicket = tickets[Math.floor(Math.random() * tickets.length)];
+        numbersDiv.textContent = `--- ${randomTicket.group} --- ${randomTicket.number} ---`;
+      }, 50);
+
+      setTimeout(() => {
+        clearInterval(interval);
+        showResults();
+      }, 3000);
+    }
+
+    // 抽選結果を表示
+    function showResults() {
+      const resultDiv = document.getElementById("result");
+      if (!drawnResults.length) {
+        drawnResults = [
+          { rank: "1等", group: winningTicket.group, number: winningTicket.number },
+          { rank: "2等", group: "002", number: "372525" },
+          { rank: "3等", group: "0120", number: "444444" },
+          { rank: "4等", group: "001", number: "241201" },
+          { rank: "5等", group: "002", number: "373150" },
+          { rank: "6等", group: "003", number: "777777" },
+          { rank: "7等", group: "0120", number: "828828" }
+        ];
+      }
+      const resultsHTML = drawnResults
+        .map(result => `${result.rank}: ${result.group}組 ${result.number}`)
+        .join("<br>");
+      resultDiv.innerHTML = resultsHTML;
+    }
+
+    // リセット処理
+    function resetLottery() {
+      drawnResults = [];
+      document.getElementById("result").textContent = "結果はここに表示されます。";
+      document.getElementById("numbers").textContent = "--- 組 --- 番号 ---";
+    }
+
+    // イベントリスナー設定
+    document.getElementById("drawButton").addEventListener("click", startLottery);
+    document.getElementById("resetButton").addEventListener("click", resetLottery);
+  </script>
+</body>
+</html>
 
