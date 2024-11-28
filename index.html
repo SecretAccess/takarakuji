@@ -89,7 +89,7 @@
     <button id="resetButton">リセット</button>
   </div>
   <div id="numbers">------</div>
-  <div id="result">?組??????</div>
+  <div id="result">1等：？組？？？？？？</div>
   <div id="history">
     <h2>過去の結果</h2>
     <div id="historyList"></div>
@@ -97,6 +97,7 @@
   <footer>© 2024 メルメルシステム</footer>
 
   <script>
+    // 初期チケット
     const initialTickets = [
       { group: "001", number: "202412" },
       { group: "002", number: "372525" },
@@ -115,8 +116,9 @@
     const resultDiv = document.getElementById("result");
     const historyList = document.getElementById("historyList");
 
+    // 抽選開始
     function startLottery() {
-      if (currentRankIndex >= tickets.length) {
+      if (tickets.length === 0) {
         resultDiv.textContent = "🎉 全ての抽選が完了しました！ 🎉";
         numbersDiv.textContent = "--- 抽選終了 ---";
         drawButton.disabled = true;
@@ -140,11 +142,13 @@
       }, 3000);
     }
 
+    // ランダム抽選と削除
     function drawRandomTicket() {
       const randomIndex = Math.floor(Math.random() * tickets.length);
       return tickets.splice(randomIndex, 1)[0];
     }
 
+    // 結果表示
     function displayResult(group, number) {
       const rank = `${currentRankIndex + 1}等`;
       resultDiv.textContent = `${rank}: ${group}組 ${number}`;
@@ -157,15 +161,17 @@
       currentRankIndex++;
     }
 
+    // リセット処理
     function resetLottery() {
       currentRankIndex = 0;
-      tickets = [...initialTickets];
-      resultDiv.textContent = "?組??????";
-      numbersDiv.textContent = "--- ガチャガチャ演出中 ---";
+      tickets = [...initialTickets]; // 再初期化
+      resultDiv.textContent = "1等：？組？？？？？？";
+      numbersDiv.textContent = "--- ---";
       historyList.innerHTML = "";
       drawButton.disabled = false;
     }
 
+    // イベントリスナー設定
     drawButton.addEventListener("click", startLottery);
     resetButton.addEventListener("click", resetLottery);
   </script>
