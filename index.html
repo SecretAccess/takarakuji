@@ -95,17 +95,6 @@
       { group: "0120", number: "828828" }
     ];
 
-    // 抽選結果（順位ごとに固定）
-    const winningResults = [
-      { rank: "1等", group: "003", number: "888888" },
-      { rank: "2等", group: "002", number: "372525" },
-      { rank: "3等", group: "0120", number: "444444" },
-      { rank: "4等", group: "001", number: "241201" },
-      { rank: "5等", group: "002", number: "373150" },
-      { rank: "6等", group: "003", number: "777777" },
-      { rank: "7等", group: "0120", number: "828828" }
-    ];
-
     let currentRankIndex = 0; // 現在の順位
     const historyList = document.getElementById("historyList");
     const drawButton = document.getElementById("drawButton");
@@ -116,14 +105,13 @@
       const resultDiv = document.getElementById("result");
 
       // 抽選が全て終了したら警告を表示
-      if (currentRankIndex >= winningResults.length) {
+      if (currentRankIndex >= tickets.length) {
         resultDiv.textContent = "全ての抽選が完了しました！リセットしてください。";
         return;
       }
 
       drawButton.disabled = true; // 抽選中ボタン無効化
       resultDiv.textContent = "抽選中...";
-      const { group, number } = winningResults[currentRankIndex];
       let interval = setInterval(() => {
         const randomTicket = tickets[Math.floor(Math.random() * tickets.length)];
         numbersDiv.textContent = `--- ${randomTicket.group} --- ${randomTicket.number} ---`;
@@ -131,16 +119,23 @@
 
       setTimeout(() => {
         clearInterval(interval);
-        numbersDiv.textContent = `--- ${group} --- ${number} ---`; // 当選番号で停止
-        showNextResult(group, number);
+        const drawnTicket = drawRandomTicket(); // ランダム抽選
+        numbersDiv.textContent = `--- ${drawnTicket.group} --- ${drawnTicket.number} ---`; // 当選番号で停止
+        showNextResult(drawnTicket.group, drawnTicket.number);
         drawButton.disabled = false; // 抽選終了でボタン有効化
       }, 3000);
+    }
+
+    // ランダムにチケットを抽選し、抽選済みリストに移動
+    function drawRandomTicket() {
+      const randomIndex = Math.floor(Math.random() * tickets.length);
+      return tickets.splice(randomIndex, 1)[0];
     }
 
     // 次の抽選結果を表示
     function showNextResult(group, number) {
       const resultDiv = document.getElementById("result");
-      const { rank } = winningResults[currentRankIndex];
+      const rank = `${currentRankIndex + 1}等`;
       resultDiv.textContent = `${rank}: ${group}組 ${number}`;
       
       // 過去の結果に追加
@@ -158,6 +153,15 @@
       document.getElementById("result").textContent = "結果はここに表示されます。";
       document.getElementById("numbers").textContent = "--- 組 --- 番号 ---";
       historyList.innerHTML = ""; // 過去の結果をクリア
+      tickets.push(
+        { group: "001", number: "202412" },
+        { group: "002", number: "372525" },
+        { group: "0120", number: "444444" },
+        { group: "001", number: "241201" },
+        { group: "002", number: "373150" },
+        { group: "003", number: "777777" },
+        { group: "0120", number: "828828" }
+      ); // 再度リストを初期化
     }
 
     // イベントリスナー設定
