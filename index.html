@@ -9,63 +9,96 @@
       font-family: Arial, sans-serif;
       text-align: center;
       margin: 20px;
-      background-color: #f8f9fa;
+      background-color: #1e1e2f;
+      color: white;
     }
     img {
       max-width: 100%;
       height: auto;
     }
-    #result {
-      margin-top: 20px;
-      font-size: 1.2em;
+    #numbers {
+      font-size: 3em;
+      margin: 20px;
+      font-family: "モード明朝", serif;
+      height: 3em; /* 固定高さで乱れ防止 */
+      white-space: nowrap; /* 改行防止 */
+      overflow: hidden; /* はみ出し防止 */
+      text-overflow: ellipsis; /* はみ出した部分に省略記号 */
+      animation: pulse 0.5s infinite;
+      color: #ff9f43;
       font-weight: bold;
     }
+    @keyframes pulse {
+      0% {
+        transform: scale(1);
+        color: #ff9f43;
+      }
+      50% {
+        transform: scale(1.2);
+        color: #ffeaa7;
+      }
+      100% {
+        transform: scale(1);
+        color: #ff9f43;
+      }
+    }
+    #result {
+      margin-top: 20px;
+      font-size: 2em;
+      font-weight: bold;
+      color: #ffdd59;
+      animation: glow 1s ease-in-out infinite alternate;
+    }
+    @keyframes glow {
+      from {
+        text-shadow: 0 0 10px #ffdd59, 0 0 20px #ffdd59, 0 0 30px #ffdd59;
+      }
+      to {
+        text-shadow: 0 0 20px #ffeaa7, 0 0 40px #ffeaa7, 0 0 60px #ffeaa7;
+      }
+    }
     button {
-      padding: 10px 20px;
+      padding: 15px 30px;
       margin: 10px;
-      font-size: 1em;
+      font-size: 1.2em;
       border: none;
-      border-radius: 5px;
+      border-radius: 10px;
       cursor: pointer;
       transition: background-color 0.3s, transform 0.2s;
+      color: white;
     }
     button:disabled {
       background-color: #ccc;
       cursor: not-allowed;
     }
     #drawButton {
-      background-color: #007bff;
-      color: white;
+      background: linear-gradient(90deg, #ff7675, #e17055, #fab1a0);
+      animation: gradient 3s infinite;
     }
     #drawButton:hover:not(:disabled) {
-      background-color: #0056b3;
-      transform: scale(1.05);
+      transform: scale(1.1);
+    }
+    @keyframes gradient {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
     }
     #resetButton {
-      background-color: #dc3545;
-      color: white;
+      background-color: #0984e3;
     }
     #resetButton:hover {
-      background-color: #a71d2a;
-      transform: scale(1.05);
-    }
-    #numbers {
-      font-size: 2em;
-      margin: 20px;
-      font-family: "モード明朝", serif;
-      height: 2em; /* 固定高さで乱れ防止 */
-      white-space: nowrap; /* 改行防止 */
-      overflow: hidden; /* はみ出し防止 */
-      text-overflow: ellipsis; /* はみ出した部分に省略記号 */
+      background-color: #74b9ff;
+      transform: scale(1.1);
     }
     #history {
       margin-top: 20px;
-      font-size: 1em;
+      font-size: 1.2em;
       text-align: left;
+      color: #dfe6e9;
     }
     .history-item {
       padding: 5px;
-      border-bottom: 1px solid #ccc;
+      border-bottom: 1px solid #555;
     }
   </style>
 </head>
@@ -76,7 +109,7 @@
     <button id="drawButton">抽選スタート</button>
     <button id="resetButton">リセット</button>
   </div>
-  <div id="numbers">--- 組 --- 番号 ---</div>
+  <div id="numbers">--- ガチャガチャ演出中 ---</div>
   <div id="result">結果はここに表示されます。</div>
   <div id="history">
     <h2>過去の結果</h2>
@@ -111,7 +144,7 @@
       }
 
       drawButton.disabled = true; // 抽選中ボタン無効化
-      resultDiv.textContent = "抽選中...";
+      numbersDiv.textContent = "ガチャガチャ中...";
       let interval = setInterval(() => {
         const randomTicket = tickets[Math.floor(Math.random() * tickets.length)];
         numbersDiv.textContent = `--- ${randomTicket.group} --- ${randomTicket.number} ---`;
@@ -120,7 +153,7 @@
       setTimeout(() => {
         clearInterval(interval);
         const drawnTicket = drawRandomTicket(); // ランダム抽選
-        numbersDiv.textContent = `--- ${drawnTicket.group} --- ${drawnTicket.number} ---`; // 当選番号で停止
+        numbersDiv.textContent = "--- 抽選完了 ---"; // ガチャガチャ部分終了
         showNextResult(drawnTicket.group, drawnTicket.number);
         drawButton.disabled = false; // 抽選終了でボタン有効化
       }, 3000);
@@ -151,7 +184,7 @@
     function resetLottery() {
       currentRankIndex = 0;
       document.getElementById("result").textContent = "結果はここに表示されます。";
-      document.getElementById("numbers").textContent = "--- 組 --- 番号 ---";
+      document.getElementById("numbers").textContent = "--- ガチャガチャ演出中 ---";
       historyList.innerHTML = ""; // 過去の結果をクリア
       tickets.push(
         { group: "001", number: "202412" },
