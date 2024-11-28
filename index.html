@@ -3,118 +3,98 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>宝くじ抽選サイト</title>
+  <title>クリスマス宝くじ抽選</title>
   <style>
     body {
-      font-family: Arial, sans-serif;
+      font-family: "Comic Sans MS", "Arial", sans-serif;
       text-align: center;
       margin: 20px;
-      background-color: #1e1e2f;
+      background: linear-gradient(to bottom, #ff5757, #008000);
       color: white;
+      overflow: hidden;
     }
     img {
-      max-width: 100%;
+      max-width: 150px;
       height: auto;
+      margin-bottom: 20px;
     }
     #numbers {
-      font-size: 3em;
+      font-size: 2.5em;
       margin: 20px;
-      font-family: "モード明朝", serif;
+      font-family: "Trebuchet MS", "Arial", sans-serif;
       height: 3em;
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
-      color: #ff9f43;
+      color: #ffdd59;
       font-weight: bold;
+      animation: blink 1s infinite;
     }
-    #numbers.animate {
-      animation: pulse 0.5s infinite;
-    }
-    @keyframes pulse {
-      0% {
-        transform: scale(1);
-        color: #ff9f43;
-      }
-      50% {
-        transform: scale(1.2);
-        color: #ffeaa7;
-      }
-      100% {
-        transform: scale(1);
-        color: #ff9f43;
-      }
+    @keyframes blink {
+      50% { opacity: 0.6; }
     }
     #result {
       margin-top: 20px;
       font-size: 2em;
       font-weight: bold;
-      color: #ffdd59;
-      animation: glow 1s ease-in-out infinite alternate;
-    }
-    @keyframes glow {
-      from {
-        text-shadow: 0 0 10px #ffdd59, 0 0 20px #ffdd59, 0 0 30px #ffdd59;
-      }
-      to {
-        text-shadow: 0 0 20px #ffeaa7, 0 0 40px #ffeaa7, 0 0 60px #ffeaa7;
-      }
+      color: #fff;
+      text-shadow: 0 0 5px #ffdd59, 0 0 10px #ffeaa7;
     }
     button {
       padding: 15px 30px;
       margin: 10px;
       font-size: 1.2em;
       border: none;
-      border-radius: 10px;
+      border-radius: 20px;
       cursor: pointer;
-      transition: background-color 0.3s, transform 0.2s;
+      transition: all 0.3s;
       color: white;
+      box-shadow: 0 4px #555;
     }
     button:disabled {
       background-color: #ccc;
       cursor: not-allowed;
     }
     #drawButton {
-      background: linear-gradient(90deg, #ff7675, #e17055, #fab1a0);
-      animation: gradient 3s infinite;
+      background-color: #ff4757;
     }
     #drawButton:hover:not(:disabled) {
+      background-color: #ff6b81;
       transform: scale(1.1);
     }
-    @keyframes gradient {
-      0% { background-position: 0% 50%; }
-      50% { background-position: 100% 50%; }
-      100% { background-position: 0% 50%; }
-    }
     #resetButton {
-      background-color: #0984e3;
+      background-color: #1e90ff;
     }
     #resetButton:hover {
-      background-color: #74b9ff;
+      background-color: #87ceeb;
       transform: scale(1.1);
     }
     #history {
       margin-top: 20px;
       font-size: 1.2em;
       text-align: left;
-      color: #dfe6e9;
+      background: rgba(255, 255, 255, 0.2);
+      border-radius: 10px;
+      padding: 10px;
+      color: #fff;
     }
     .history-item {
       padding: 5px;
-      border-bottom: 1px solid #555;
+      border-bottom: 1px solid #eee;
     }
   </style>
 </head>
 <body>
-  <h1>宝くじ抽選</h1>
-  <img src="merumerut.png" alt="ロゴ">
+  <h1>🎄 クリスマス宝くじ抽選 🎁</h1>
+  <img src="https://upload.wikimedia.org/wikipedia/commons/4/47/Christmas_tree_icon.png" alt="クリスマスツリー">
   <div>
     <button id="drawButton">抽選スタート</button>
     <button id="resetButton">リセット</button>
   </div>
-  <div id="numbers" class="animate">--- ガチャガチャ演出中 ---</div>
+  <div id="numbers">--- ガチャガチャ演出中 ---</div>
   <div id="result">結果はここに表示されます。</div>
   <div id="history">
-    <h2>過去の結果</h2>
+    <h2>過去の結果 🎅</h2>
     <ul id="historyList"></ul>
   </div>
 
@@ -141,15 +121,13 @@
 
       // 抽選が全て終了したら警告を表示
       if (currentRankIndex >= tickets.length) {
-        resultDiv.textContent = "抽選完了しました！";
-        numbersDiv.classList.remove("animate");
+        resultDiv.textContent = "🎉 抽選完了しました！ 🎉";
         numbersDiv.textContent = "--- 抽選完了 ---";
         return;
       }
 
       drawButton.disabled = true; // 抽選中ボタン無効化
       numbersDiv.textContent = "ガチャガチャ中...";
-      numbersDiv.classList.add("animate");
       let interval = setInterval(() => {
         const randomTicket = tickets[Math.floor(Math.random() * tickets.length)];
         numbersDiv.textContent = `--- ${randomTicket.group} --- ${randomTicket.number} ---`;
@@ -158,7 +136,6 @@
       setTimeout(() => {
         clearInterval(interval);
         const drawnTicket = drawRandomTicket(); // ランダム抽選
-        numbersDiv.classList.remove("animate");
         numbersDiv.textContent = "--- 抽選完了 ---";
         showNextResult(drawnTicket.group, drawnTicket.number);
         drawButton.disabled = false; // 抽選終了でボタン有効化
@@ -191,7 +168,6 @@
       currentRankIndex = 0;
       document.getElementById("result").textContent = "結果はここに表示されます。";
       numbersDiv.textContent = "--- ガチャガチャ演出中 ---";
-      numbersDiv.classList.add("animate");
       historyList.innerHTML = ""; // 過去の結果をクリア
       tickets.push(
         { group: "001", number: "202412" },
