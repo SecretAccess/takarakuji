@@ -53,15 +53,29 @@
       { group: "0120", number: "828828" }
     ];
 
-    // 1等の固定当選データ
-    const winningTicket = { group: "003", number: "888888" };
+    // 抽選結果（順位ごとに固定）
+    const winningResults = [
+      { rank: "1等", group: "003", number: "888888" },
+      { rank: "2等", group: "002", number: "372525" },
+      { rank: "3等", group: "0120", number: "444444" },
+      { rank: "4等", group: "001", number: "241201" },
+      { rank: "5等", group: "002", number: "373150" },
+      { rank: "6等", group: "003", number: "777777" },
+      { rank: "7等", group: "0120", number: "828828" }
+    ];
 
-    let drawnResults = []; // 抽選結果を格納
+    let currentRankIndex = 0; // 現在の順位
 
     // 抽選演出
     function startLottery() {
       const numbersDiv = document.getElementById("numbers");
       const resultDiv = document.getElementById("result");
+
+      // 抽選が全て終了したら警告を表示
+      if (currentRankIndex >= winningResults.length) {
+        resultDiv.textContent = "全ての抽選が完了しました！リセットしてください。";
+        return;
+      }
 
       resultDiv.textContent = "抽選中...";
       let interval = setInterval(() => {
@@ -71,33 +85,21 @@
 
       setTimeout(() => {
         clearInterval(interval);
-        showResults();
+        showNextResult();
       }, 3000);
     }
 
-    // 抽選結果を表示
-    function showResults() {
+    // 次の抽選結果を表示
+    function showNextResult() {
       const resultDiv = document.getElementById("result");
-      if (!drawnResults.length) {
-        drawnResults = [
-          { rank: "1等", group: winningTicket.group, number: winningTicket.number },
-          { rank: "2等", group: "002", number: "372525" },
-          { rank: "3等", group: "0120", number: "444444" },
-          { rank: "4等", group: "001", number: "241201" },
-          { rank: "5等", group: "002", number: "373150" },
-          { rank: "6等", group: "003", number: "777777" },
-          { rank: "7等", group: "0120", number: "828828" }
-        ];
-      }
-      const resultsHTML = drawnResults
-        .map(result => `${result.rank}: ${result.group}組 ${result.number}`)
-        .join("<br>");
-      resultDiv.innerHTML = resultsHTML;
+      const { rank, group, number } = winningResults[currentRankIndex];
+      resultDiv.textContent = `${rank}: ${group}組 ${number}`;
+      currentRankIndex++; // 次の順位に進む
     }
 
     // リセット処理
     function resetLottery() {
-      drawnResults = [];
+      currentRankIndex = 0;
       document.getElementById("result").textContent = "結果はここに表示されます。";
       document.getElementById("numbers").textContent = "--- 組 --- 番号 ---";
     }
@@ -108,4 +110,3 @@
   </script>
 </body>
 </html>
-
