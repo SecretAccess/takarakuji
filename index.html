@@ -9,6 +9,7 @@
       font-family: Arial, sans-serif;
       text-align: center;
       margin: 20px;
+      background-color: #f8f9fa;
     }
     img {
       max-width: 100%;
@@ -23,17 +24,48 @@
       padding: 10px 20px;
       margin: 10px;
       font-size: 1em;
+      border: none;
+      border-radius: 5px;
       cursor: pointer;
+      transition: background-color 0.3s, transform 0.2s;
+    }
+    button:disabled {
+      background-color: #ccc;
+      cursor: not-allowed;
+    }
+    #drawButton {
+      background-color: #007bff;
+      color: white;
+    }
+    #drawButton:hover:not(:disabled) {
+      background-color: #0056b3;
+      transform: scale(1.05);
+    }
+    #resetButton {
+      background-color: #dc3545;
+      color: white;
+    }
+    #resetButton:hover {
+      background-color: #a71d2a;
+      transform: scale(1.05);
     }
     #numbers {
       font-size: 2em;
       margin: 20px;
       font-family: "モード明朝", serif;
+      height: 2em; /* 固定高さで乱れ防止 */
+      white-space: nowrap; /* 改行防止 */
+      overflow: hidden; /* はみ出し防止 */
+      text-overflow: ellipsis; /* はみ出した部分に省略記号 */
     }
     #history {
       margin-top: 20px;
       font-size: 1em;
       text-align: left;
+    }
+    .history-item {
+      padding: 5px;
+      border-bottom: 1px solid #ccc;
     }
   </style>
 </head>
@@ -76,6 +108,7 @@
 
     let currentRankIndex = 0; // 現在の順位
     const historyList = document.getElementById("historyList");
+    const drawButton = document.getElementById("drawButton");
 
     // 抽選演出
     function startLottery() {
@@ -88,6 +121,7 @@
         return;
       }
 
+      drawButton.disabled = true; // 抽選中ボタン無効化
       resultDiv.textContent = "抽選中...";
       const { group, number } = winningResults[currentRankIndex];
       let interval = setInterval(() => {
@@ -99,6 +133,7 @@
         clearInterval(interval);
         numbersDiv.textContent = `--- ${group} --- ${number} ---`; // 当選番号で停止
         showNextResult(group, number);
+        drawButton.disabled = false; // 抽選終了でボタン有効化
       }, 3000);
     }
 
@@ -110,6 +145,7 @@
       
       // 過去の結果に追加
       const listItem = document.createElement("li");
+      listItem.className = "history-item";
       listItem.textContent = `${rank}: ${group}組 ${number}`;
       historyList.appendChild(listItem);
 
@@ -125,7 +161,7 @@
     }
 
     // イベントリスナー設定
-    document.getElementById("drawButton").addEventListener("click", startLottery);
+    drawButton.addEventListener("click", startLottery);
     document.getElementById("resetButton").addEventListener("click", resetLottery);
   </script>
 </body>
