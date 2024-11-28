@@ -12,7 +12,7 @@
       padding: 0;
       background: linear-gradient(to bottom, #ffecd2, #fcb69f);
       color: #333;
-      overflow-y: auto; /* スクロール対応 */
+      overflow-y: auto;
     }
     img {
       max-width: 200px;
@@ -97,7 +97,7 @@
   <footer>© 2024 メルメルシステム</footer>
 
   <script>
-    const tickets = [
+    const initialTickets = [
       { group: "001", number: "202412" },
       { group: "002", number: "372525" },
       { group: "0120", number: "444444" },
@@ -107,7 +107,8 @@
       { group: "0120", number: "828828" }
     ];
 
-    let currentRankIndex = 0; // 現在の順位
+    let tickets = [...initialTickets];
+    let currentRankIndex = 0;
     const drawButton = document.getElementById("drawButton");
     const resetButton = document.getElementById("resetButton");
     const numbersDiv = document.getElementById("numbers");
@@ -158,15 +159,7 @@
 
     function resetLottery() {
       currentRankIndex = 0;
-      tickets.push(
-        { group: "001", number: "202412" },
-        { group: "002", number: "372525" },
-        { group: "0120", number: "444444" },
-        { group: "001", number: "241201" },
-        { group: "002", number: "373150" },
-        { group: "003", number: "777777" },
-        { group: "0120", number: "828828" }
-      );
+      tickets = [...initialTickets];
       resultDiv.textContent = "結果はここに表示されます。";
       numbersDiv.textContent = "--- ガチャガチャ演出中 ---";
       historyList.innerHTML = "";
