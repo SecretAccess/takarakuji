@@ -89,7 +89,7 @@
     <button id="resetButton">リセット</button>
   </div>
   <div id="numbers">------</div>
-  <div id="result">結果はここに表示されます。</div>
+  <div id="result">?組??????</div>
   <div id="history">
     <h2>過去の結果</h2>
     <div id="historyList"></div>
@@ -160,7 +160,7 @@
     function resetLottery() {
       currentRankIndex = 0;
       tickets = [...initialTickets];
-      resultDiv.textContent = "結果はここに表示されます。";
+      resultDiv.textContent = "?組??????";
       numbersDiv.textContent = "--- ガチャガチャ演出中 ---";
       historyList.innerHTML = "";
       drawButton.disabled = false;
