@@ -3,99 +3,324 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>宝くじ抽選</title>
+  <title>年末ジャンボ抽選</title>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&display=swap" rel="stylesheet">
   <style>
-    body {
-      font-family: "Arial", sans-serif;
-      text-align: center;
+    :root {
+      --primary-color: #e74c3c;
+      --secondary-color: #2980b9;
+      --accent-color: #f39c12;
+      --success-color: #2ecc71;
+      --text-color: #333;
+      --light-text: #fff;
+      --background-gradient: linear-gradient(135deg, #f6d365 0%, #fda085 100%);
+      --card-bg: rgba(255, 255, 255, 0.9);
+      --animation-speed: 0.3s;
+    }
+
+    * {
+      box-sizing: border-box;
       margin: 0;
       padding: 0;
-      background: linear-gradient(to bottom, #ffecd2, #fcb69f);
-      color: #333;
-      overflow-y: auto;
     }
-   img {
-  max-width: 300px; /* 200pxから300pxに変更 */
-  height: auto;
-  margin: 20px 0;
-}
 
-    #numbers {
-      font-size: 2.5em;
-      margin: 20px;
-      font-family: "Verdana", sans-serif;
-      height: 3em;
-      color: #d35400;
-      font-weight: bold;
+    body {
+      font-family: 'Noto Sans JP', "Arial", sans-serif;
+      text-align: center;
+      background: var(--background-gradient);
+      color: var(--text-color);
+      overflow-y: auto;
+      min-height: 100vh;
+      padding: 20px;
+      line-height: 1.6;
     }
-    #result {
-      margin-top: 20px;
-      font-size: 2em;
-      font-weight: bold;
-      color: #2ecc71;
+
+    .container {
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 20px;
     }
+
+    .header {
+      margin-bottom: 30px;
+    }
+
+    h1 {
+      font-size: 2.5rem;
+      margin-bottom: 15px;
+      color: var(--primary-color);
+      text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+      position: relative;
+      display: inline-block;
+    }
+
+    h1::after {
+      content: "";
+      position: absolute;
+      bottom: -8px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 100px;
+      height: 3px;
+      background-color: var(--accent-color);
+      border-radius: 3px;
+    }
+
+    h2 {
+      font-size: 1.8rem;
+      margin-bottom: 15px;
+      color: var(--secondary-color);
+    }
+
+    .logo {
+      max-width: 250px;
+      height: auto;
+      margin: 20px auto;
+      display: block;
+      border-radius: 10px;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+      transition: transform var(--animation-speed);
+    }
+
+    .logo:hover {
+      transform: scale(1.05);
+    }
+
+    .button-group {
+      display: flex;
+      justify-content: center;
+      gap: 20px;
+      margin: 25px 0;
+      flex-wrap: wrap;
+    }
+
     button {
       padding: 15px 30px;
-      margin: 10px;
-      font-size: 1.2em;
+      font-size: 1.2rem;
+      font-weight: bold;
       border: none;
-      border-radius: 30px;
+      border-radius: 50px;
       cursor: pointer;
-      transition: transform 0.2s, box-shadow 0.2s;
+      transition: all var(--animation-speed);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 200px;
     }
+
+    button i {
+      margin-right: 10px;
+    }
+
     button:disabled {
       background-color: #ccc;
       cursor: not-allowed;
+      transform: none;
+      box-shadow: none;
     }
+
     #drawButton {
-      background: #e74c3c;
-      color: #fff;
-      box-shadow: 0 4px #c0392b;
+      background: var(--primary-color);
+      color: var(--light-text);
+      box-shadow: 0 4px 6px rgba(231, 76, 60, 0.4);
     }
+
     #drawButton:hover:not(:disabled) {
-      transform: scale(1.1);
-      box-shadow: 0 6px #c0392b;
+      transform: translateY(-3px);
+      box-shadow: 0 6px 12px rgba(231, 76, 60, 0.5);
     }
+
+    #drawButton:active:not(:disabled) {
+      transform: translateY(1px);
+      box-shadow: 0 2px 3px rgba(231, 76, 60, 0.4);
+    }
+
     #resetButton {
-      background: #2980b9;
-      color: #fff;
-      box-shadow: 0 4px #2471a3;
+      background: var(--secondary-color);
+      color: var(--light-text);
+      box-shadow: 0 4px 6px rgba(41, 128, 185, 0.4);
     }
+
     #resetButton:hover {
-      transform: scale(1.1);
-      box-shadow: 0 6px #2471a3;
+      transform: translateY(-3px);
+      box-shadow: 0 6px 12px rgba(41, 128, 185, 0.5);
     }
+
+    #resetButton:active {
+      transform: translateY(1px);
+      box-shadow: 0 2px 3px rgba(41, 128, 185, 0.4);
+    }
+
+    .display-card {
+      background: var(--card-bg);
+      border-radius: 15px;
+      padding: 25px;
+      margin: 20px 0;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    }
+
+    #numbers {
+      font-size: 2.5rem;
+      font-family: "Verdana", sans-serif;
+      height: 3rem;
+      color: var(--primary-color);
+      font-weight: bold;
+      margin: 15px 0;
+      text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
+      letter-spacing: 2px;
+    }
+
+    #result {
+      margin: 15px 0;
+      font-size: 2rem;
+      font-weight: bold;
+      color: var(--success-color);
+      transition: all 0.5s;
+    }
+
     #history {
-      margin-top: 20px;
-      padding: 20px;
-      background: rgba(255, 255, 255, 0.8);
-      border-radius: 10px;
+      margin-top: 40px;
     }
+
+    .history-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      max-height: 300px;
+      overflow-y: auto;
+      padding: 10px;
+    }
+
     .history-item {
-      font-size: 1.2em;
-      margin-bottom: 10px;
+      font-size: 1.2rem;
+      padding: 10px 15px;
+      background: rgba(255, 255, 255, 0.7);
+      border-left: 4px solid var(--accent-color);
+      border-radius: 5px;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+      text-align: left;
+      transition: transform var(--animation-speed);
     }
+
+    .history-item:hover {
+      transform: translateX(5px);
+      background: rgba(255, 255, 255, 0.9);
+    }
+
+    .history-item:nth-child(1) {
+      border-left-color: gold;
+    }
+
+    .history-item:nth-child(2) {
+      border-left-color: silver;
+    }
+
+    .history-item:nth-child(3) {
+      border-left-color: #cd7f32; /* bronze */
+    }
+
     footer {
-      margin-top: 30px;
-      font-size: 0.8em;
-      color: #666;
+      margin-top: 50px;
+      padding: 20px;
+      font-size: 0.9rem;
+      color: rgba(0, 0, 0, 0.5);
+    }
+
+    /* アニメーション */
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes pulse {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.05); }
+      100% { transform: scale(1); }
+    }
+
+    .fade-in {
+      animation: fadeIn 0.8s forwards;
+    }
+
+    .pulse {
+      animation: pulse 1.5s infinite;
+    }
+
+    /* レスポンシブデザイン */
+    @media (max-width: 768px) {
+      .container {
+        padding: 10px;
+      }
+      
+      h1 {
+        font-size: 2rem;
+      }
+      
+      #numbers {
+        font-size: 2rem;
+      }
+      
+      #result {
+        font-size: 1.6rem;
+      }
+      
+      button {
+        min-width: 160px;
+        padding: 12px 20px;
+      }
+    }
+
+    @media (max-width: 480px) {
+      h1 {
+        font-size: 1.8rem;
+      }
+      
+      .logo {
+        max-width: 200px;
+      }
+      
+      #numbers {
+        font-size: 1.6rem;
+      }
+      
+      #result {
+        font-size: 1.4rem;
+      }
+      
+      .history-item {
+        font-size: 1rem;
+      }
     }
   </style>
 </head>
 <body>
-  <h1>年末ジャンボ 抽選 </h1>
-  <img src="merumerut.png" alt="メルメルロゴ">
-  <div>
-    <button id="drawButton">抽選スタート</button>
-    <button id="resetButton">リセット</button>
+  <div class="container fade-in">
+    <div class="header">
+      <h1>年末ジャンボ 抽選</h1>
+      <img src="/api/placeholder/400/320" alt="メルメルロゴ" class="logo">
+    </div>
+
+    <div class="button-group">
+      <button id="drawButton"><i class="fas fa-random"></i>抽選スタート</button>
+      <button id="resetButton"><i class="fas fa-redo"></i>リセット</button>
+    </div>
+
+    <div class="display-card">
+      <div id="numbers">------</div>
+      <div id="result">1等：？組？？？？？？</div>
+    </div>
+
+    <div id="history" class="display-card">
+      <h2><i class="fas fa-history"></i> 抽選履歴</h2>
+      <div id="historyList" class="history-list"></div>
+    </div>
+
+    <footer>
+      <p>© 2024 メルメルシステム</p>
+      <p>All rights reserved.</p>
+    </footer>
   </div>
-  <div id="numbers">------</div>
-  <div id="result">1等：？組？？？？？？</div>
-  <div id="history">
-    <h2>過去の結果</h2>
-    <div id="historyList"></div>
-  </div>
-  <footer>© 2024 メルメルシステム</footer>
 
   <script>
     // 初期チケット
@@ -117,10 +342,15 @@
     const resultDiv = document.getElementById("result");
     const historyList = document.getElementById("historyList");
 
+    // サウンドエフェクト（オプション）
+    // const drumrollSound = new Audio('drumroll.mp3');
+    // const winSound = new Audio('win.mp3');
+
     // 抽選開始
     function startLottery() {
       if (tickets.length === 0) {
         resultDiv.textContent = "🎉 全ての抽選が完了しました！ 🎉";
+        resultDiv.classList.add("pulse");
         numbersDiv.textContent = "--- 抽選終了 ---";
         drawButton.disabled = true;
         return;
@@ -128,19 +358,34 @@
 
       drawButton.disabled = true;
       numbersDiv.textContent = "ガチャガチャ中...";
+      // drumrollSound.play(); // オプション
 
+      // アニメーション速度
+      let speed = 50;
+      let duration = 3000;
+      let startTime = Date.now();
+      
       let interval = setInterval(() => {
+        const elapsed = Date.now() - startTime;
+        const progress = elapsed / duration;
+        
+        // アニメーションが進むにつれて徐々に遅くなる
+        if (progress > 0.7) {
+          speed = 100 + Math.floor((progress - 0.7) * 300);
+        }
+        
         const randomTicket = tickets[Math.floor(Math.random() * tickets.length)];
-        numbersDiv.textContent = `--- ${randomTicket.group} --- ${randomTicket.number} ---`;
-      }, 50);
-
-      setTimeout(() => {
-        clearInterval(interval);
-        const drawnTicket = drawRandomTicket();
-        numbersDiv.textContent = `--- ${drawnTicket.group} --- ${drawnTicket.number} ---`;
-        displayResult(drawnTicket.group, drawnTicket.number);
-        drawButton.disabled = false;
-      }, 3000);
+        numbersDiv.textContent = `${randomTicket.group} - ${randomTicket.number}`;
+        
+        if (elapsed >= duration) {
+          clearInterval(interval);
+          const drawnTicket = drawRandomTicket();
+          numbersDiv.textContent = `${drawnTicket.group} - ${drawnTicket.number}`;
+          displayResult(drawnTicket.group, drawnTicket.number);
+          // winSound.play(); // オプション
+          drawButton.disabled = false;
+        }
+      }, speed);
     }
 
     // ランダム抽選と削除
@@ -151,30 +396,90 @@
 
     // 結果表示
     function displayResult(group, number) {
-      const rank = `${currentRankIndex + 1}等`;
+      const rankLabels = ["1等", "2等", "3等", "4等", "5等", "6等", "7等"];
+      const rank = rankLabels[currentRankIndex] || `${currentRankIndex + 1}等`;
+      
       resultDiv.textContent = `${rank}: ${group}組 ${number}`;
+      
+      // 1等から3等まではエフェクトを追加
+      if (currentRankIndex < 3) {
+        resultDiv.classList.add("pulse");
+        setTimeout(() => {
+          resultDiv.classList.remove("pulse");
+        }, 3000);
+      }
 
       const historyItem = document.createElement("div");
-      historyItem.className = "history-item";
-      historyItem.textContent = `${rank}: ${group}組 ${number}`;
-      historyList.appendChild(historyItem);
-
+      historyItem.className = "history-item fade-in";
+      
+      // 等級によって表示を少し変える
+      if (currentRankIndex === 0) {
+        historyItem.innerHTML = `<strong>🏆 ${rank}:</strong> ${group}組 ${number}`;
+      } else if (currentRankIndex === 1) {
+        historyItem.innerHTML = `<strong>🥈 ${rank}:</strong> ${group}組 ${number}`;
+      } else if (currentRankIndex === 2) {
+        historyItem.innerHTML = `<strong>🥉 ${rank}:</strong> ${group}組 ${number}`;
+      } else {
+        historyItem.innerHTML = `<strong>${rank}:</strong> ${group}組 ${number}`;
+      }
+      
+      historyList.prepend(historyItem); // 新しい結果を上に表示
       currentRankIndex++;
+      
+      // 残りチケット数を表示
+      updateRemainingTickets();
+    }
+    
+    // 残りチケット数の更新
+    function updateRemainingTickets() {
+      const remainingText = tickets.length > 0 
+        ? `残り ${tickets.length} 枚のチケットがあります`
+        : "抽選完了！";
+        
+      // ここで残りチケット数を表示する要素を追加してもいい
     }
 
     // リセット処理
     function resetLottery() {
+      // リセットアニメーション
+      numbersDiv.classList.add("fade-in");
+      resultDiv.classList.add("fade-in");
+      setTimeout(() => {
+        numbersDiv.classList.remove("fade-in");
+        resultDiv.classList.remove("fade-in");
+      }, 800);
+      
+      // データリセット
       currentRankIndex = 0;
       tickets = [...initialTickets]; // 再初期化
       resultDiv.textContent = "1等：？組？？？？？？";
-      numbersDiv.textContent = "--- ---";
-      historyList.innerHTML = "";
+      resultDiv.classList.remove("pulse");
+      numbersDiv.textContent = "------";
+      
+      // 履歴リセット（アニメーション付き）
+      Array.from(historyList.children).forEach((item, index) => {
+        setTimeout(() => {
+          item.style.opacity = 0;
+          item.style.transform = "translateX(20px)";
+        }, 50 * index);
+      });
+      
+      setTimeout(() => {
+        historyList.innerHTML = "";
+      }, 500);
+      
       drawButton.disabled = false;
+      updateRemainingTickets();
     }
 
     // イベントリスナー設定
     drawButton.addEventListener("click", startLottery);
     resetButton.addEventListener("click", resetLottery);
+    
+    // 初期表示時のアニメーション
+    document.addEventListener("DOMContentLoaded", function() {
+      updateRemainingTickets();
+    });
   </script>
 </body>
 </html>
